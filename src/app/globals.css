@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+/* ─── CB Events Dark Design Token System ─── */
+:root {
+  /* Base palette */
+  --cb-black: #09090b;
+  --cb-dark-1: #0c0c0e;
+  --cb-dark-2: #141416;
+  --cb-dark-3: #1c1c1f;
+  --cb-dark-4: #27272a;
+  --cb-dark-5: #3f3f46;
+
+  /* Accent — amber/orange luxury palette */
+  --cb-accent: #f59e0b;
+  --cb-accent-light: #fbbf24;
+  --cb-accent-dark: #d97706;
+  --cb-accent-muted: rgba(245, 158, 11, 0.15);
+  --cb-accent-glow: rgba(245, 158, 11, 0.25);
+
+  /* Status */
+  --cb-success: #22c55e;
+  --cb-warning: #eab308;
+  --cb-error: #ef4444;
+  --cb-info: #3b82f6;
+
+  /* Text */
+  --cb-text-primary: #fafafa;
+  --cb-text-secondary: #a1a1aa;
+  --cb-text-muted: #71717a;
+  --cb-text-accent: var(--cb-accent-light);
+
+  /* Semantic mapping */
+  --background: var(--cb-black);
+  --foreground: var(--cb-text-primary);
+  --card: var(--cb-dark-2);
+  --card-foreground: var(--cb-text-primary);
+  --popover: var(--cb-dark-2);
+  --popover-foreground: var(--cb-text-primary);
+  --primary: var(--cb-accent);
+  --primary-foreground: var(--cb-black);
+  --secondary: var(--cb-dark-3);
+  --secondary-foreground: var(--cb-text-primary);
+  --muted: var(--cb-dark-3);
+  --muted-foreground: var(--cb-text-muted);
+  --accent: var(--cb-accent-muted);
+  --accent-foreground: var(--cb-accent-light);
+  --destructive: var(--cb-error);
+  --destructive-foreground: var(--cb-text-primary);
+  --border: var(--cb-dark-4);
+  --input: var(--cb-dark-3);
+  --ring: var(--cb-accent);
+  --radius: 0.75rem;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px var(--cb-accent-glow);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-cb-accent: var(--cb-accent);
+  --color-cb-accent-light: var(--cb-accent-light);
+  --color-cb-accent-dark: var(--cb-accent-dark);
+  --color-cb-success: var(--cb-success);
+  --color-cb-warning: var(--cb-warning);
+  --color-cb-error: var(--cb-error);
+  --color-cb-info: var(--cb-info);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/* ─── Base Styles ─── */
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar Styling ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cb-dark-1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cb-dark-4);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cb-dark-5);
+}
+
+/* ─── Utility Classes ─── */
+.glass-card {
+  background: rgba(20, 20, 22, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--cb-dark-4);
+  border-radius: var(--radius);
+}
+
+.glow-accent {
+  box-shadow: var(--shadow-glow);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, var(--cb-accent-dark), var(--cb-accent));
+}
+
+.text-gradient-accent {
+  background: linear-gradient(135deg, var(--cb-accent), var(--cb-accent-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Status badge utilities */
+.status-open {
+  color: var(--cb-warning);
+  background: rgba(234, 179, 8, 0.15);
+}
+
+.status-claimed {
+  color: var(--cb-info);
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.status-completed {
+  color: var(--cb-success);
+  background: rgba(34, 197, 94, 0.15);
+}
+
+.status-cancelled {
+  color: var(--cb-text-muted);
+  background: rgba(113, 113, 122, 0.15);
+}
+
+/* Tap target sizing for mobile */
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}
