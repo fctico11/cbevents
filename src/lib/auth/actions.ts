@@ -23,7 +23,7 @@ export async function loginAction(formData: FormData) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: "Authentication failed" };
 
-    const { data: eventUser } = await supabase
+    const { data: eventUser, error: roleError } = await supabase
         .from("event_users")
         .select("role")
         .eq("user_id", user.id)
@@ -31,7 +31,10 @@ export async function loginAction(formData: FormData) {
         .limit(1)
         .single();
 
+    if (roleError) console.error("[loginAction] role fetch failed:", roleError);
+
     const role = eventUser?.role ?? "bartender";
+    console.log(`[loginAction] retrieved role: ${role}`);
 
     switch (role) {
         case "manager":

@@ -1,34 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Logo } from "@/components/branding/logo";
 import { Sparkles, Eye, EyeOff } from "lucide-react";
+import { loginAction } from "@/lib/auth/actions";
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        setLoading(true);
         setError(null);
 
-        // In production: calls loginAction server action
         const formData = new FormData(e.currentTarget);
-        const email = formData.get("email") as string;
 
-        // Mock login for demo
-        setTimeout(() => {
-            setLoading(false);
-            if (email.includes("manager")) {
-                window.location.href = "/manager";
-            } else if (email.includes("barback")) {
-                window.location.href = "/barback";
-            } else {
-                window.location.href = "/bartender";
+        startTransition(async () => {
+            const result = await loginAction(formData);
+            if (result?.error) {
+                setError(result.error);
             }
-        }, 800);
+        });
     }
 
     return (
@@ -90,17 +83,17 @@ export default function LoginPage() {
 
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={isPending}
                         className="tap-target w-full rounded-xl gradient-accent px-4 py-3 text-sm font-bold text-black transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 glow-accent"
                     >
-                        {loading ? "Signing in…" : "Sign In"}
+                        {isPending ? "Signing in…" : "Sign In"}
                     </button>
                 </form>
 
                 <div className="mt-6 rounded-xl border border-border/50 bg-card/50 p-4 text-xs text-muted-foreground">
-                    <p className="font-medium text-foreground mb-2">Demo Accounts:</p>
+                    <p className="font-medium text-foreground mb-2">Accounts Setup:</p>
                     <ul className="space-y-1">
-                        <li><span className="text-cb-accent-light">Manager:</span> manager@cbevents.com</li>
+                        <li><span className="text-cb-accent-light">Manager:</span> fac322@nyu.edu</li>
                         <li><span className="text-cb-accent-light">Bartender:</span> bartender1@cbevents.com</li>
                         <li><span className="text-cb-accent-light">Barback:</span> barback1@cbevents.com</li>
                     </ul>
