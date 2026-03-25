@@ -1,6 +1,7 @@
 import { getBartenderData } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { BartenderClient } from "./bartender-client";
+import { RealtimeRefresh } from "@/components/shared/realtime-refresh";
 
 export default async function BartenderPage() {
     const data = await getBartenderData();
@@ -13,13 +14,16 @@ export default async function BartenderPage() {
     const userName = Array.isArray(eventUser.profiles) ? eventUser.profiles[0]?.full_name : (eventUser.profiles as any)?.full_name;
 
     return (
-        <BartenderClient 
-            event={event}
-            bar={bar}
-            userName={userName || user.email}
-            requestTree={requestTree}
-            requests={requests}
-        />
+        <>
+            <RealtimeRefresh />
+            <BartenderClient 
+                event={event}
+                bar={bar}
+                userName={userName || user.email}
+                requestTree={requestTree}
+                requests={requests}
+            />
+        </>
     );
 }
 

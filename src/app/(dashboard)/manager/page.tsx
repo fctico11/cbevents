@@ -1,5 +1,6 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { BarsOverviewGrid, LiveActivityFeed, ActiveRequestsTable } from "@/components/manager";
+import { RealtimeRefresh } from "@/components/shared/realtime-refresh";
 import { getDashboardData } from "@/lib/supabase/queries";
 import { Calendar, MapPin } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -17,6 +18,8 @@ export default async function ManagerPage() {
 
     return (
         <DashboardShell role="manager" eventName={event.name} userName={userName || user.email}>
+            <RealtimeRefresh />
+            
             {/* Event Header */}
             <div className="mb-6">
                 <h1 className="text-2xl font-bold text-foreground">{event.name}</h1>

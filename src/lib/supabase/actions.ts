@@ -1,6 +1,7 @@
 "use server";
 
 import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 import type { RequestNode } from "@/lib/types";
 
 /**
@@ -74,6 +75,9 @@ export async function createRequest(params: {
 
     // Fire SMS notification asynchronously (don't block)
     triggerSmsNotification(request.id, params.event_id).catch(console.error);
+
+    revalidatePath("/bartender");
+    revalidatePath("/manager");
 
     return { data: request };
 }
