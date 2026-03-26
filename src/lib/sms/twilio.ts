@@ -18,6 +18,7 @@ export interface SmsResult {
     recipientPhone: string;
     recipientUserId: string;
     providerMessageId?: string;
+    twilioStatus?: string;
     error?: string;
 }
 
@@ -45,6 +46,7 @@ export async function sendSms(
             recipientPhone: to,
             recipientUserId,
             providerMessageId: message.sid,
+            twilioStatus: message.status,
         };
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";

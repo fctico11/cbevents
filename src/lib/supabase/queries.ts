@@ -46,12 +46,21 @@ export async function getDashboardData() {
         .order("created_at", { ascending: false })
         .limit(50);
 
+    // Remap Supabase join keys to match RequestWithDetails type
+    const remappedRequests = (requests || []).map((r: any) => ({
+        ...r,
+        bar: r.bars ?? null,
+        created_by_profile: r.profiles ?? null,
+        assigned_to_profile: r.assignee ?? null,
+        node: r.request_nodes ?? null,
+    }));
+
     return {
         user,
         eventUser,
         event,
         bars: bars || [],
-        requests: requests || [],
+        requests: remappedRequests,
         activity: activity || [],
     };
 }

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { notifyRequestCreated } from "@/lib/sms";
+import { notifyRequestCreated } from "@/lib/email";
 
 /**
- * POST /api/twilio/request-created
+ * POST /api/notify/request-created
  * Called internally after a request is created.
- * Sends SMS to all managers and barbacks for the event.
+ * Sends email to all managers and barbacks for the event.
  */
 export async function POST(req: globalThis.Request) {
     try {
@@ -49,36 +49,30 @@ export async function POST(req: globalThis.Request) {
             .eq("id", request.bar_id)
             .single();
 
-        // Fetch all managers + barbacks for this event who have a phone number
+        // Fetch all managers + barbacks for this event who have an email
         const { data: recipients } = await supabase
             .from("event_users")
             .select(`
-        user_id,
-        role,
-        profiles:user_id (phone)
-      `)
+                user_id,
+                role,
+                profiles:user_id (email)
+            `)
             .eq("event_id", event_id)
             .eq("is_active", true)
             .in("role", ["manager", "barback"]);
 
         const validRecipients = (recipients ?? [])
             .filter((r) => {
-                const profile = r.profiles as unknown as { phone: string | null };
-                return profile?.phone;
+                const profile = r.profiles as unknown as { email: string | null };
+                return profile?.email;
             })
             .map((r) => {
-                const profile = r.profiles as unknown as { phone: string };
-                return {
-                    userId: r.user_id,
-                    phone: profile.phone,
-                };
+                const profile = r.profiles as unknown as { email: string };
+                return { userId: r.user_id, email: profile.email };
             });
 
         if (validRecipients.length === 0) {
-            return NextResponse.json({
-                message: "No recipients with phone numbers",
-                sent: 0,
-            });
+            return NextResponse.json({ message: "No recipients with email addresses", sent: 0 });
         }
 
         // Send notifications
@@ -92,13 +86,12 @@ export async function POST(req: globalThis.Request) {
 
         // Log each attempt to notification_logs
         for (const result of results) {
-            const isFailure = !result.success || result.twilioStatus === "undelivered" || result.twilioStatus === "failed";
             await supabase.from("notification_logs").insert({
                 request_id,
-                recipient_phone: result.recipientPhone,
+                recipient_phone: result.recipientEmail,
                 recipient_user_id: result.recipientUserId,
-                provider: "twilio",
-                status: isFailure ? "failed" : (result.twilioStatus ?? "sent"),
+                provider: "resend",
+                status: result.success ? "sent" : "failed",
                 provider_message_id: result.providerMessageId ?? null,
                 error_message: result.error ?? null,
             });
@@ -112,7 +105,7 @@ export async function POST(req: globalThis.Request) {
             total: results.length,
         });
     } catch (error) {
-        console.error("[API] twilio/request-created error:", error);
+        console.error("[API] notify/request-created error:", error);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 },

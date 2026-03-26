@@ -82,17 +82,17 @@ export async function createRequest(params: {
     return { data: request };
 }
 
-/** Fire-and-forget SMS notification via internal API route */
+/** Fire-and-forget email notification via internal API route */
 async function triggerSmsNotification(requestId: string, eventId: string) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     try {
-        await fetch(`${appUrl}/api/twilio/request-created`, {
+        await fetch(`${appUrl}/api/notify/request-created`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ request_id: requestId, event_id: eventId }),
         });
     } catch (error) {
-        console.error("[SMS] Failed to trigger notification:", error);
+        console.error("[Email] Failed to trigger notification:", error);
     }
 }
 
